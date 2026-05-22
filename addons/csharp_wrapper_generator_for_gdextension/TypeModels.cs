@@ -209,6 +209,9 @@ public partial class WrapperGeneratorMain
 
             classBuilder
                 .AppendLine("}");
+
+            foreach (var enumInfo in Enums)
+                enumInfo.RenderEnumSafeAsInt32Extensions(classBuilder, "", logger);
         }
 
         private void RenderCacheString<T>(
@@ -351,6 +354,35 @@ public partial class WrapperGeneratorMain
         {
             builder.Append(CSharpTypeName);
             if (UseAlias) builder.Append(IsBitField ? "Flags" : "Enum");
+        }
+
+        private void RenderExtensionsClassName(StringBuilder builder)
+        {
+            RenderEnumName(builder);
+            builder.Append("Extensions");
+        }
+
+        public void RenderEnumSafeAsInt32Extensions(StringBuilder builder, string indent, GenerationLogger logger)
+        {
+            using var _ = logger.BeginScope(GodotTypeName.ToString());
+            var qualifiedEnumName = new StringBuilder();
+            RenderType(qualifiedEnumName, logger);
+
+            var extensionsClassName = new StringBuilder();
+            RenderExtensionsClassName(extensionsClassName);
+
+            builder.AppendLine();
+            builder.Append(indent).Append("file static class ").Append(extensionsClassName).AppendLine();
+            builder.Append(indent).AppendLine("{");
+            builder.Append(indent).Append(indent).Append("public static int SafeAsInt32(this ").Append(qualifiedEnumName).AppendLine(" enumValue) =>");
+            builder.Append(indent).Append(indent).Append(indent).AppendLine("Convert.ToInt32(enumValue);");
+            builder.AppendLine();
+            builder.Append(indent).Append(indent).Append("public static int SafeAsInt32(this ").Append(qualifiedEnumName).AppendLine(" enumValue, int defaultValue) =>");
+            builder.Append(indent).Append(indent).Append(indent).AppendLine("Convert.ToInt32(enumValue);");
+            builder.AppendLine();
+            builder.Append(indent).Append(indent).Append("public static int SafeAsInt32(this ").Append(qualifiedEnumName).AppendLine("? enumValue, int defaultValue = 0) =>");
+            builder.Append(indent).Append(indent).Append(indent).AppendLine("enumValue.HasValue ? Convert.ToInt32(enumValue.Value) : defaultValue;");
+            builder.Append(indent).AppendLine("}");
         }
 
         public static string FormatEnumName(GodotName enumName, GodotName enumConstName)

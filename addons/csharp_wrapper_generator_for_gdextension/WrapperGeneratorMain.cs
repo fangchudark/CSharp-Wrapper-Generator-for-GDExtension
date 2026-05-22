@@ -170,7 +170,6 @@ public partial class WrapperGeneratorMain : EditorPlugin
         };
 
         gdExtensionTypes.AsParallel().ForAll(type => TypeWriter.WriteType(type, escapedNamespace, indent, files, warnings));
-        files.Add(TypeWriter.CreateEnumExtensionsFile(escapedNamespace));
 
         var escapedPath = EscapePath(_targetPath.Text);
         if (escapedPath != _targetPath.Text)

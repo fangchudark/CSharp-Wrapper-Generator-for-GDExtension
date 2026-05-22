@@ -64,40 +64,6 @@ public partial class WrapperGeneratorMain
     
     private static class TypeWriter
     {
-        public static FileConstruction CreateEnumExtensionsFile(string nameSpace)
-        {
-            var builder = new StringBuilder();
-            builder.AppendLine("#pragma warning disable CS0109");
-            builder.AppendLine("using System;");
-            builder.AppendLine();
-            builder.Append("namespace ").Append(nameSpace).AppendLine(";");
-            builder.AppendLine();
-            builder.AppendLine("/// <summary>");
-            builder.AppendLine("/// Extension methods shared by generated GDExtension wrapper types.");
-            builder.AppendLine("/// </summary>");
-            builder.AppendLine("public static class GDExtensionWrapperExtensions");
-            builder.AppendLine("{");
-            builder.AppendLine("    /// <summary>");
-            builder.AppendLine("    /// Returns the underlying integer value of a generated wrapper enum.");
-            builder.AppendLine("    /// </summary>");
-            builder.AppendLine("    public static int SafeAsInt32<T>(this T enumValue) where T : struct, Enum =>");
-            builder.AppendLine("        Convert.ToInt32(enumValue);");
-            builder.AppendLine();
-            builder.AppendLine("    /// <summary>");
-            builder.AppendLine("    /// Returns the underlying integer value of a generated wrapper enum.");
-            builder.AppendLine("    /// </summary>");
-            builder.AppendLine("    public static int SafeAsInt32<T>(this T enumValue, int defaultValue) where T : struct, Enum =>");
-            builder.AppendLine("        Convert.ToInt32(enumValue);");
-            builder.AppendLine();
-            builder.AppendLine("    /// <summary>");
-            builder.AppendLine("    /// Returns the underlying integer value when present, otherwise <paramref name=\"defaultValue\"/>.");
-            builder.AppendLine("    /// </summary>");
-            builder.AppendLine("    public static int SafeAsInt32<T>(this T? enumValue, int defaultValue = 0) where T : struct, Enum =>");
-            builder.AppendLine("        enumValue.HasValue ? Convert.ToInt32(enumValue.Value) : defaultValue;");
-            builder.AppendLine("}");
-            return new("GDExtensionWrapperExtensions.cs", builder.ToString());
-        }
-
         public static void WriteType(
             GodotClassType type,
             string nameSpace, 
